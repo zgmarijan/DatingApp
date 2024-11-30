@@ -31,7 +31,6 @@ export class RegisterComponent {
         console.log(response);
         this.cancel();
       },
-      error: (error) => this.toastr.error(error.error),
     });
   }
 

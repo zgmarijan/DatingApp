@@ -22,6 +22,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               }
               throw modelStateErrors.flat();
             } else {
+              console.log(error);
               toastr.error(error.error, error.status);
             }
             break;
