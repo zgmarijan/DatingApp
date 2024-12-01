@@ -25,7 +25,7 @@ export const routes: Routes = [
         children: [],
       },
       {
-        path: 'members/:id',
+        path: 'members/:username',
         component: MemberDetailComponent,
       },
       {
