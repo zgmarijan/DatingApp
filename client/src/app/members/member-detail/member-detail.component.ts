@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   inject,
   OnInit,
   ViewChild,
@@ -39,17 +40,20 @@ export class MemberDetailComponent implements OnInit, AfterViewInit {
   images: GalleryItem[] = [];
   activeTab?: TabDirective;
   messages: Message[] = [];
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.loadMember();
   }
 
   ngAfterViewInit(): void {
-    this.route.queryParams.subscribe({
+    const subscription = this.route.queryParams.subscribe({
       next: (params) => {
         params['tab'] && this.selectTab(params['tab']);
       },
     });
+
+    this.destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 
   onUpdateMessages(event: Message) {

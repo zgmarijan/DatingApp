@@ -1,15 +1,17 @@
 using System;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class DataContext(DbContextOptions options) : DbContext(options)
+public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, AppRole, int, 
+    IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
 {
-    public required DbSet<AppUser> Users { get; set; }
     public required DbSet<UserLike> Likes { get; set; }
 
-    public DbSet<Message> Messages { get; set; }
+    public required DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -17,6 +19,18 @@ public class DataContext(DbContextOptions options) : DbContext(options)
 
         builder.Entity<UserLike>()
             .HasKey(k => new {k.SourceUserId, k.TargetUserId});
+
+        builder.Entity<AppUser>()
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(u => u.User)
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
+
+        builder.Entity<AppRole>()
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(r => r.Role)
+            .HasForeignKey(ur => ur.RoleId)
+            .IsRequired();
 
         builder.Entity<UserLike>()
             .HasOne(s => s.SourceUser)
